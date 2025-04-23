@@ -1,0 +1,118 @@
+https://script.google.com/macros/s/AKfycbwpG2MEcI0T-yRQo_UiRXMObgqTRBWmTLaoOpPT2hnMaypV-SGmkxG3nbU3hIW1c-XF_A/exec
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registration Form</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        input { width: 100%; padding: 8px; margin-top: 5px; }
+        button { padding: 10px 20px; background: #4CAF50; color: white; border: none; cursor: pointer; }
+        button:hover { background: #45a049; }
+        #registrations { margin-top: 30px; border-top: 2px solid #ccc; padding-top: 20px; }
+        .registration-item { 
+            background: #f5f5f5;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+    <h1>Registration Form</h1>
+    <form id="registrationForm">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" required>
+        </div>
+        <div class="form-group">
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" required>
+        </div>
+        <div class="form-group">
+            <label for="uniqueNumber">Choose Unique Number (1-1499):</label>
+            <input type="number" id="uniqueNumber" min="1" max="1499" required>
+        </div>
+        <button type="submit">Register</button>
+    </form>
+    <div id="message"></div>
+    
+    <!-- Added Registration List Section -->
+    <div id="registrations">
+        <h2>Current Registrations</h2>
+        <div id="registrationList"></div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyMaeJn4YgC6vBK3vvn0NZvVD1QjttckyF0xrymuB35c3_iaoccRw2yGamfKfqr0ikM8g/exec'
+        // Function to load and display registrations
+        async function loadRegistrations() {
+            try {
+                const response = await fetch(`${SCRIPT_URL}?action=get`);
+                const data = await response.json();
+                
+                const listDiv = document.getElementById('registrationList');
+                listDiv.innerHTML = data
+                    .map(user => `
+                        <div class="registration-item">
+                            <span>${user[0]}</span>
+                            <span>${user[1]}</span>
+                            <span>#${user[2]}</span>
+                        </div>
+                    `).join('');
+            } catch (error) {
+                console.error('Error loading registrations:', error);
+            }
+        }
+
+        // Initial load
+        loadRegistrations();
+
+        document.getElementById('registrationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const uniqueNumber = document.getElementById('uniqueNumber').value;
+            
+            if (uniqueNumber <= 0 || uniqueNumber >= 1500) {
+                alert('Please enter a number between 1 and 1499');
+                return;
+            }
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: new URLSearchParams({
+                        name: name,
+                        phone: phone,
+                        uniqueNumber: uniqueNumber
+                    })
+                });
+
+                const result = await response.text();
+                if (result === 'Success') {
+                    document.getElementById('message').innerHTML = `
+                        <h3>Good luck, ${name}!</h3>
+                        <p>Your registration details:</p>
+                        <p>Name: ${name}</p>
+                        <p>Phone: ${phone}</p>
+                        <p>Your unique number: ${uniqueNumber}</p>
+                    `;
+                    document.getElementById('registrationForm').reset();
+                    
+                    // Refresh the registration list after submission
+                    loadRegistrations();
+                } else {
+                    alert('This number is already taken. Please choose a different number.');
+                }
+            } catch (error) {
+                alert('Error submitting form. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>
