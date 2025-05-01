@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <title>WAPh Abbaa Carraa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            background-color: #666666 !important;
+        }
+        .form-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px 20px 80px 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: rgba(64, 61, 66, 1);
+            border-radius: 15px;
+            border: 2px solid rgb(243, 158, 0);
+        }
+        .form-label {
+            color: #ffffff !important;
+        }
+        .number-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 3px;
+            margin: 15px 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background-color: rgba(64, 61, 66, 1);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .number-box {
+            padding: 8px;
+            text-align: center;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            color: #ffffff;
+            background-color: rgba(113, 111, 115, 1);
+        }
+        .number-box:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px orange;
+        }
+        .form-control {
+            background-color: rgba(81, 78, 85, 0.51) !important;
+            border: 1px solid #ffffff;
+            color: #ffffff;
+            padding: 10px 15px;
+        }
+        .spinner-border {
+            display: none;
+        }
+        .btn-loading .spinner-border {
+            display: inline-block;
+        }
+        .btn-loading .btn-text {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .form-container {
+                margin: 10px;
+                padding: 15px 15px 60px 15px;
+            }
+            .number-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 2px;
+            }
+            .number-box {
+                padding: 6px;
+                font-size: 0.8rem;
+            }
+            .registered-number-display {
+                font-size: 2rem !important;
+            }
+            .custom-success-alert {
+                width: 90% !important;
+                padding: 20px !important;
+            }
+        }
+        .number-grid.visible {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .number-box.registered {
+            background-color: rgba(254, 141, 13, 1);
+            color: #ffffff;
+            font-weight: bold;
+        }
+        .number-box.selected {
+            background-color: #4cad20;
+            color: white;
+        }
+        .instructions-header {
+            cursor: pointer;
+            padding: 10px;
+            background-color: rgba(64, 61, 66, 1);
+            border-radius: 5px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #f5f5f5;
+        }
+        .instructions-header:hover {
+            background-color: #4c4c4c;
+            color: #f5f5f5;
+        }
+        .instructions-content{
+
+            color: #f5f5f5;
+        }
+        .toggle-icon {
+            transition: transform 0.3s;
+            color: rgb(255, 146, 20);
+        }
+        .custom-success-alert {
+            max-width: 400px;
+            width: 90%;
+            padding: 50px 20px !important;
+            border-radius: 10px !important;
+            border: 2px solid #4CAF50 !important;
+            background: white !important;
+            color: #1f1f1f !important;
+             
+        }
+        .user-name-display {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin: 8px 0;
+            color: #333;
+        }
+        .registered-number-display {
+            font-size: 3.1rem;
+            color: orange;
+            font-weight: bold;
+            margin: 8px 0;
+        }
+        .mb-4 {
+            color: #fc9134;
+            font-weight: bolder; 
+            font-size: x-large;
+        }
+        .mb-3 {
+            color: #ffffff;
+        }
+        .btn-primary {
+            background-color: black;
+            color: #ffffff;
+        }
+        .swal2-popup {
+            background: white !important;
+        }
+        .image-section {
+            margin-top: 40px;
+            text-align: center;
+            color: #ffffff;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .image-section div {
+            margin: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .image-section div:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px orange;
+        }
+        .image-section img {
+            max-width: 200px; /* Limit the maximum width */
+            height: auto;
+            border: 2px solid #ffffff;
+            border-radius: 8px;
+        }
+        @media (max-width: 768px) {
+            .image-section {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container">
+        <div class="form-container">
+            <h4 class="text-center mb-4">Waldaa Afuurawaa Qul. Phaawuloos</h4>
+            <div class="instructions">
+                <div class="instructions-header" id="instructionsToggle">
+                    <span>Lakkoofsa filachuuf</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="instructions-content">
+                    <strong>Haala itti fayyadamaa:</strong> 
+                    <ol>
+                        <li>Lakkoofsa hinfilatamne filadhaa</li>
+                        <li>Maqaafi lakkoofsa bilbilaa galchaa</li>
+                        <li>"Tikeettii fudhadhu" isa jedhu tuqaa</li>
+                    </ol>
+                    <p>Lakkoofsonni halluu burtukaanawaan jiran qabamaniiru.</p>
+                </div>
+            </div>
+            <div class="number-grid" id="numberGrid"></div>
+            <form id="submit-form" class="needs-validation" novalidate>
+                <input type="hidden" id="selectedNumber" name="message" required>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Maqaa:</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="contact_number" class="form-label">Lakkoofsa bilbilaa:</label>
+                    <input type="tel" class="form-control" id="contact_number" name="contact_number" 
+                           pattern="[0-9]{10}" title="10-digit phone number" required
+                           inputmode="numeric">
+                </div>
+                <button type="submit" class="btn btn-primary w-100" id="submit-btn" disabled>
+                    <span class="spinner-border spinner-border-sm"></span>
+                    <span class="btn-text">Tikkeettii fudhadhu</span>
+                </button>
+            </form>
+        </div>
+
+        <div class="image-section">
+            <h4 class="mb-4">Caarraa Gaarii</h4>
+            <div>
+                <h5>Image 1: img1</h5>
+                <img src="img1.png" alt="Image 1">
+            </div>
+            <div>
+                <h5>Image 2: img2</h5>
+                <img src="img2.png" alt="Image 2">
+            </div>
+            <div>
+                <h5>Image 3: img3</h5>
+                <img src="img3.png" alt="Image 3">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const scriptURL = "https://script.google.com/macros/s/AKfycbzWAJJ-_oD3jo-3jDD49cFVq5Ax865zMBwt1wgQhlrOe_Bw7FJVmMuR6GemaXeBP-ezyw/exec";
+        const form = document.getElementById("submit-form");
+        const submitBtn = document.getElementById("submit-btn");
+        const numberGrid = document.getElementById("numberGrid");
+        const selectedNumberInput = document.getElementById("selectedNumber");
+        const instructionsToggle = document.getElementById("instructionsToggle");
+
+        let registeredNumbers = [];
+        let selectedNumber = null;
+        let controller = null;
+
+        instructionsToggle.addEventListener('click', function() {
+            const icon = this.querySelector('.toggle-icon');
+            numberGrid.classList.toggle('visible');
+            icon.style.transform = numberGrid.classList.contains('visible') 
+                ? 'rotate(180deg)' 
+                : 'rotate(0deg)';
+        });
+
+        function initializeNumberGrid() {
+            const fragment = document.createDocumentFragment();
+            for (let i = 1; i <= 1000; i++) {
+                const numberBox = document.createElement('div');
+                numberBox.className = 'number-box';
+                numberBox.textContent = i;
+                numberBox.dataset.number = i;
+                
+                if (registeredNumbers.includes(i)) {
+                    numberBox.classList.add('registered');
+                } else {
+                    numberBox.addEventListener('click', () => selectNumber(i));
+                }
+                
+                fragment.appendChild(numberBox);
+            }
+            numberGrid.innerHTML = '';
+            numberGrid.appendChild(fragment);
+        }
+
+        function selectNumber(number) {
+            const prevSelected = document.querySelector('.number-box.selected');
+            if (prevSelected) prevSelected.classList.remove('selected');
+            
+            selectedNumber = number;
+            selectedNumberInput.value = number;
+            submitBtn.disabled = false;
+            
+            document.querySelector(`.number-box[data-number="${number}"]`).classList.add('selected');
+        }
+
+        async function loadRegisteredNumbers() {
+            try {
+                const response = await fetch(`${scriptURL}?getRegisteredNumbers=true`);
+                const result = await response.json();
+                if (result.registeredNumbers) {
+                    registeredNumbers = result.registeredNumbers.map(Number);
+                    initializeNumberGrid();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire('Error', 'Failed to load numbers. Please refresh.', 'error');
+            }
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!form.checkValidity()) {
+                e.stopPropagation();
+                form.classList.add('was-validated');
+                return;
+            }
+
+            if (controller) controller.abort();
+            controller = new AbortController();
+            const timeoutId = setTimeout(() => {
+                controller.abort();
+                Swal.fire('Error', 'Request timed out after 10 seconds', 'error');
+            }, 10000);
+
+            try {
+                submitBtn.classList.add('btn-loading');
+                submitBtn.disabled = true;
+
+                const formData = new FormData(form);
+                const response = await fetch(scriptURL, { 
+                    method: 'POST', 
+                    body: formData,
+                    signal: controller.signal 
+                });
+
+                clearTimeout(timeoutId);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const result = await response.json();
+
+                if (result.result === 'success') {
+                    const userName = document.getElementById('name').value;
+                    await Swal.fire({
+                        customClass: {
+                            popup: 'custom-success-alert',
+                        },
+                        width: 400,
+                        title: 'Carraa Gaarii',
+                        html: `
+                            <div style="position: relative;">
+                                <div class="text-left">
+                                    <div class="user-name-display">${userName}</div>
+                                    <div>Lakkoofsi Tikkeettii</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="registered-number-display">Number ${selectedNumber}</div>
+                                </div>
+                            </div>
+                        `,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+
+                    const numberBox = document.querySelector(`.number-box[data-number="${selectedNumber}"]`);
+                    numberBox.classList.add('registered');
+                    numberBox.classList.remove('selected');
+                    registeredNumbers.push(selectedNumber);
+                    
+                    form.reset();
+                    form.classList.remove('was-validated');
+                    selectedNumber = null;
+                    selectedNumberInput.value = '';
+                    submitBtn.disabled = true;
+                } else {
+                    throw new Error(result.message || 'Registration failed');
+                }
+            } catch (error) {
+                clearTimeout(timeoutId);
+                if (error.name === 'AbortError') {
+                    Swal.fire('Error', 'Request timed out. Please try again.', 'error');
+                } else {
+                    Swal.fire('Error', error.message || 'Submission failed. Please try again.', 'error');
+                }
+                console.error('Error:', error);
+            } finally {
+                submitBtn.classList.remove('btn-loading');
+                controller = null;
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', loadRegisteredNumbers);
+    </script>
+</body>
+</html>
